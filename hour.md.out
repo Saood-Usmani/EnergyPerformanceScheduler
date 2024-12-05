@@ -1,0 +1,3 @@
+Caught an exception!
+Machine::AttachVM(): Attempt at attaching virtual machine 55 to machine 10 while in sleep mode
+Bailing out!
