@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Flag to indicate whether to skip Hour.md
-SKIP_HOUR=false
+# Flag to indicate whether to skip hour.md
+SKIP_hour=false
 OUTPUT_FILE="simulator_output.log"
 
 # Parse command-line arguments
 while getopts "h" opt; do
     case $opt in
         h)
-            SKIP_HOUR=true
+            SKIP_hour=true
             ;;
         *)
             echo "Usage: $0 [-h]"
-            echo "  -h   Skip processing the file named Hour.md"
+            echo "  -h   Skip processing the file named hour.md"
             exit 1
             ;;
     esac
@@ -36,9 +36,9 @@ fi
 
 # Loop through all directories and process .md files
 for file in $(find . -type f -name "*.md"); do
-    # Skip Hour.md if -h flag is provided
-    if $SKIP_HOUR && [[ "$(basename "$file")" == "Hour.md" ]]; then
-        echo "Skipping Hour.md as per -h flag" | tee -a "$OUTPUT_FILE"
+    # Skip hour.md if -h flag is provided
+    if $SKIP_hour && [[ "$(basename "$file")" == "hour.md" ]]; then
+        echo "Skipping hour.md as per -h flag" | tee -a "$OUTPUT_FILE"
         continue
     fi
 
