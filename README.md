@@ -9,7 +9,7 @@ The algorithms each are located in a folder called Algos. Each are stored as a .
 Scheduler.hpp was changed to add helper functions and variables.
 bestAlgo.txt is loaded into Scheduler.cpp
 Our best run (from bestAlgo.txt) has been sent seperatly as well as it can be seen in BEST.txt. We are using hour.md for the best test.
-We would like to acknowledge the use of ChatGPT as part of development for these algorithms.
+We would like to acknowledge the use of AI(ChatGPT, Co-Pilot) as part of development for these algorithms.
 
 ### Location of Tests:
 Tests are located in the Test_Cases folder. These are all the ones that Dr. Mootaz provided (*I think*)
