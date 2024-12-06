@@ -4,8 +4,8 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0067847KW-Hour
-Simulation run finished in 3.48 seconds
+Total Energy 0.00829378 KW-Hour
+Simulation run finished in 4.38 seconds
 ------------------------
 Processing ./README.md...
 ------------------------
@@ -13,7 +13,7 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0KW-Hour
+Total Energy 0 KW-Hour
 Simulation run finished in 0 seconds
 ------------------------
 Processing ./otherPut.md...
@@ -22,17 +22,17 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0067847KW-Hour
-Simulation run finished in 3.48 seconds
+Total Energy 0.0111116 KW-Hour
+Simulation run finished in 6.12 seconds
 ------------------------
 Processing ./tallShort.md...
 ------------------------
 SLA violation report
-SLA0: 80.5292%
-SLA1: 4.87805%
+SLA0: 92.3615%
+SLA1: 12.1951%
 SLA2: 0%
-Total Energy 0.0722715KW-Hour
-Simulation run finished in 85.8 seconds
+Total Energy 0.0493752 KW-Hour
+Simulation run finished in 54.24 seconds
 ------------------------
 Processing ./matchMeIfYouCan.md...
 ------------------------
@@ -40,8 +40,8 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0619014KW-Hour
-Simulation run finished in 27.06 seconds
+Total Energy 0.0501215 KW-Hour
+Simulation run finished in 21.06 seconds
 ------------------------
 Processing ./niceAndSmooth.md...
 ------------------------
@@ -49,8 +49,8 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0121098KW-Hour
-Simulation run finished in 16.32 seconds
+Total Energy 0.0123215 KW-Hour
+Simulation run finished in 16.68 seconds
 ------------------------
 Processing ./spikeyMean.md...
 ------------------------
@@ -58,7 +58,7 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0250566KW-Hour
+Total Energy 0.0250284 KW-Hour
 Simulation run finished in 28.08 seconds
 ------------------------
 Processing ./spikyNefarious.md...
@@ -67,8 +67,8 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0116119KW-Hour
-Simulation run finished in 16.32 seconds
+Total Energy 0.0116396 KW-Hour
+Simulation run finished in 16.68 seconds
 ------------------------
 Processing ./hour.md...
 ------------------------
@@ -76,8 +76,8 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 7.30762KW-Hour
-Simulation run finished in 3603.48 seconds
+Total Energy 7.26131 KW-Hour
+Simulation run finished in 3604.32 seconds
 ------------------------
 Processing ./gentlerHour.md...
 ------------------------
@@ -85,15 +85,15 @@ SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 7.26773KW-Hour
-Simulation run finished in 3603.48 seconds
+Total Energy 7.24574 KW-Hour
+Simulation run finished in 3604.32 seconds
 ------------------------
 Processing ./bigSmall.md...
 ------------------------
 SLA violation report
-SLA0: 20.2696%
-SLA1: 6.09756%
+SLA0: 11.0584%
+SLA1: 3.65854%
 SLA2: 0%
-Total Energy 0.0745031KW-Hour
-Simulation run finished in 90.78 seconds
+Total Energy 0.0519071 KW-Hour
+Simulation run finished in 60.42 seconds
 ------------------------
