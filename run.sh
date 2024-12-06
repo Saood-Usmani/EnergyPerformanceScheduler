@@ -34,8 +34,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Loop through all directories and process .md files
-for file in $(find . -type f -name "*.md"); do
+# Loop through all .md files in the Test Cases directory
+for file in $(find "Test_Cases" -type f -name "*.md"); do
     # Skip hour.md if -h flag is provided
     if $SKIP_hour && [[ "$(basename "$file")" == "hour.md" ]]; then
         echo "Skipping hour.md as per -h flag" | tee -a "$OUTPUT_FILE"

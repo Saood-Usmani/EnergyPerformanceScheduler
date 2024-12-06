@@ -1,4 +1,14 @@
-Processing ./Input.md...
+Processing Test_Cases/gentlerHour.md...
+------------------------
+SLA violation report
+SLA0: 0%
+SLA1: 0%
+SLA2: 0%
+Total Energy 7.26968KW-Hour
+Simulation run finished in 3603.48 seconds
+------------------------
+Skipping hour.md as per -h flag
+Processing Test_Cases/Input.md...
 ------------------------
 SLA violation report
 SLA0: 0%
@@ -7,61 +17,43 @@ SLA2: 0%
 Total Energy 0.0067847KW-Hour
 Simulation run finished in 3.48 seconds
 ------------------------
-Processing ./README.md...
+Processing Test_Cases/matchMeIfYouCan.md...
+------------------------
+SLA violation report
+SLA0: 7.96306%
+SLA1: 8.53659%
+SLA2: 0%
+Total Energy 0.0973709KW-Hour
+Simulation run finished in 44.58 seconds
+------------------------
+Processing Test_Cases/niceAndSmooth.md...
 ------------------------
 SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0KW-Hour
-Simulation run finished in 0 seconds
-------------------------
-Processing ./otherPut.md...
-------------------------
-SLA violation report
-SLA0: 0%
-SLA1: 0%
-SLA2: 0%
-Total Energy 0.0067847KW-Hour
-Simulation run finished in 3.48 seconds
-------------------------
-Processing ./tallShort.md...
-------------------------
-SLA violation report
-SLA0: 80.5292%
-SLA1: 4.87805%
-SLA2: 0%
-Total Energy 0.0722715KW-Hour
-Simulation run finished in 85.8 seconds
-------------------------
-Processing ./matchMeIfYouCan.md...
-------------------------
-SLA violation report
-SLA0: 0%
-SLA1: 0%
-SLA2: 0%
-Total Energy 0.0619014KW-Hour
-Simulation run finished in 27.06 seconds
-------------------------
-Processing ./niceAndSmooth.md...
-------------------------
-SLA violation report
-SLA0: 0%
-SLA1: 0%
-SLA2: 0%
-Total Energy 0.0121098KW-Hour
+Total Energy 0.0121028KW-Hour
 Simulation run finished in 16.32 seconds
 ------------------------
-Processing ./spikeyMean.md...
+Processing Test_Cases/otherPut.md...
 ------------------------
 SLA violation report
 SLA0: 0%
 SLA1: 0%
 SLA2: 0%
-Total Energy 0.0250566KW-Hour
-Simulation run finished in 28.08 seconds
+Total Energy 0.0067847KW-Hour
+Simulation run finished in 3.48 seconds
 ------------------------
-Processing ./spikyNefarious.md...
+Processing Test_Cases/spikeyMean.md...
+------------------------
+SLA violation report
+SLA0: 0%
+SLA1: 0%
+SLA2: 0%
+Total Energy 0.0251718KW-Hour
+Simulation run finished in 28.26 seconds
+------------------------
+Processing Test_Cases/spikyNefarious.md...
 ------------------------
 SLA violation report
 SLA0: 0%
@@ -70,30 +62,21 @@ SLA2: 0%
 Total Energy 0.0116119KW-Hour
 Simulation run finished in 16.32 seconds
 ------------------------
-Processing ./hour.md...
+Processing Test_Cases/tallShort.md...
 ------------------------
 SLA violation report
-SLA0: 0%
-SLA1: 0%
+SLA0: 75.312%
+SLA1: 20.7317%
 SLA2: 0%
-Total Energy 7.30762KW-Hour
-Simulation run finished in 3603.48 seconds
+Total Energy 0.0764573KW-Hour
+Simulation run finished in 91.56 seconds
 ------------------------
-Processing ./gentlerHour.md...
+Processing Test_Cases/bigSmall.md...
 ------------------------
 SLA violation report
-SLA0: 0%
-SLA1: 0%
+SLA0: 29.1063%
+SLA1: 20.7317%
 SLA2: 0%
-Total Energy 7.26773KW-Hour
-Simulation run finished in 3603.48 seconds
-------------------------
-Processing ./bigSmall.md...
-------------------------
-SLA violation report
-SLA0: 20.2696%
-SLA1: 6.09756%
-SLA2: 0%
-Total Energy 0.0745031KW-Hour
-Simulation run finished in 90.78 seconds
+Total Energy 0.0989166KW-Hour
+Simulation run finished in 123.66 seconds
 ------------------------

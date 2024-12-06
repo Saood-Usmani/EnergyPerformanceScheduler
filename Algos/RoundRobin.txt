@@ -1,3 +1,4 @@
+// Round Robin
 // Scheduler.cpp
 // CloudSim
 
@@ -7,7 +8,7 @@
 
 // Static variables
 static bool migrating = false;
-static unsigned active_machines = 16; // Minimum number of active machines at start
+static unsigned active_machines = 16; 
 static size_t rr_pointer = 0; // Pointer for Round Robin scheduling
 
 // Machine groups by CPU type
@@ -28,7 +29,6 @@ VMId_t Scheduler::FindOrCreateVM(MachineId_t machine_id, VMType_t vm_type, CPUTy
     return new_vm;
 }
 
-// Helper function to get default VM type for a CPU type
 VMType_t Scheduler::GetDefaultVMForCPU(CPUType_t cpu_type) {
     switch (cpu_type) {
         case X86:
@@ -84,7 +84,6 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
         MachineId_t machine_id = MachineId_t(index);
         MachineInfo_t machine_info = Machine_GetInfo(machine_id);
 
-        // Check compatibility
         if (machine_info.s_state == S0 && // Machine is active
             machine_info.cpu == task_info.required_cpu && // CPU type matches
             machine_info.memory_used + task_info.required_memory <= machine_info.memory_size) { // Memory fits
@@ -101,7 +100,6 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
         }
     }
 
-    // If no suitable machine was found, activate a new one
     for (unsigned i = 0; i < total_machines; i++) {
         size_t index = (rr_pointer + i) % total_machines;
         MachineId_t machine_id = MachineId_t(index);
@@ -135,32 +133,18 @@ void Scheduler::MigrationComplete(Time_t time, VMId_t vm_id) {
 }
 
 void Scheduler::PeriodicCheck(Time_t now) {
-    SimOutput("Scheduler::PeriodicCheck(): Performing consolidation and DVFS check", 2);
+    SimOutput("Scheduler::PeriodicCheck(): Performing consolidation check", 3);
     
-    for (MachineId_t machine_id : machines) {
-        MachineInfo_t machine_info = Machine_GetInfo(machine_id);
-
-        if (machine_info.s_state == S0) { // Only consider active machines
-            double utilization = static_cast<double>(machine_info.active_tasks) / machine_info.num_cpus;
-
-            // Determine P-state based on utilization thresholds
-            CPUPerformance_t new_p_state;
-            if (utilization > 0.75) {
-                new_p_state = P0; // Highest performance
-            } else if (utilization > 0.50) {
-                new_p_state = P1;
-            } else if (utilization > 0.25) {
-                new_p_state = P2;
-            } else {
-                new_p_state = P3; // Lowest power
-            }
-
-            // Apply the new P-state
-            Machine_SetCorePerformance(machine_id, 0, new_p_state); // Core ID is ignored
-            SimOutput("Scheduler::PeriodicCheck(): Adjusted P-state for machine " +
-                      to_string(machine_id) + " to " + to_string(new_p_state), 1);
-        }
-    }
+    // for (unsigned i = 0; i < machines.size(); i++) {
+    //     MachineId_t machine_id = machines[i];
+    //     MachineInfo_t machine_info = Machine_GetInfo(machine_id);
+        
+    //     // If machine is idle and has no active VMs or tasks, deactivate it
+    //     if (machine_info.active_tasks == 0 && machine_info.active_vms == 0 && machine_info.s_state == S0) {
+    //         Machine_SetState(machine_id, S5);
+    //         SimOutput("Scheduler::PeriodicCheck(): Deactivated machine " + to_string(machine_id), 2);
+    //     }
+    // }
 }
 void Scheduler::Shutdown(Time_t time) {
     // Do your final reporting and bookkeeping here.

@@ -1,7 +1,8 @@
+// Best Algo for da win
 #include "Scheduler.hpp"
 #include <unordered_map>
 #include <climits>
-#include <algorithm>  // for std::min_element or std::sort
+#include <algorithm>
 #include <cfloat>
 
 
@@ -32,7 +33,7 @@ void Scheduler::Init() {
         machine_groups[machine_info.cpu].push_back(MachineId_t(i));
     }
 
-    // As before: initialize some machines and put others to S5
+    // New vms and machines base on groups
     for (auto &group : machine_groups) {
         CPUType_t cpu_type = group.first;
         vector<MachineId_t> &group_machines = group.second;
@@ -86,7 +87,6 @@ for (MachineId_t machine_id : machines) {
         machine_info.cpu == task_info.required_cpu &&
         (machine_info.memory_size - machine_info.memory_used) >= (task_info.required_memory + VM_MEMORY_OVERHEAD)) {
 
-        // Create a VM of the exact required type:
         VMId_t new_vm = VM_Create(task_info.required_vm, task_info.required_cpu);
         VM_Attach(new_vm, machine_id);
         VM_AddTask(new_vm, task_id, task_info.priority);
@@ -105,15 +105,8 @@ for (MachineId_t machine_id : machines) {
     }
 }
 
-// NEW LOGIC: AssignTaskToBestVM
 VMId_t Scheduler::AssignTaskToBestVM(TaskId_t task_id) {
     TaskInfo_t task_info = GetTaskInfo(task_id);
-
-    // We want to pick a VM that:
-    // 1. Matches CPU and VM type
-    // 2. Has enough memory
-    // 3. Minimizes expected completion time (e.g., pick a machine that is running in P0 or has fewer tasks)
-    // 4. If GPU-capable and task is GPU-capable, prefer that machine
 
     VMId_t best_vm = VMId_t(-1);
     double best_score = DBL_MAX;
@@ -136,10 +129,7 @@ VMId_t Scheduler::AssignTaskToBestVM(TaskId_t task_id) {
             continue; // memory fits?
 
         // Heuristic to score this VM:
-        // factor in load, performance state (p_state), GPU, and time till deadline
         double load = CalculateMachineLoad(mach_info.machine_id);
-        // Lower load is better, but we also consider GPU and P-state
-        // If GPU present and task can use GPU, huge speed boost:
         double perf_factor = 1.0;
         if (task_info.gpu_capable && mach_info.gpus) {
             perf_factor = 0.5; // just a heuristic: GPU speeds up tasks

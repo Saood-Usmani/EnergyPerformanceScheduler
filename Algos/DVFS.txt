@@ -1,15 +1,11 @@
-//
+//  DVFS >> Turning machines off
 //  Scheduler.cpp
 //  CloudSim
-//
-//  Updated for Dynamic Consolidation-Based Scheduling Implementation
-//
 
 #include "Scheduler.hpp"
 #include <unordered_map>
 #include <climits>
 
-static unsigned active_machines = 64; // Minimum number of active machines at start
 
 VMType_t Scheduler::GetDefaultVMForCPU(CPUType_t cpu_type) {
     switch (cpu_type) {
@@ -30,7 +26,7 @@ void Scheduler::Init() {
     unsigned total_machines = Machine_GetTotal();
     SimOutput("Scheduler::Init(): Total number of machines is " + to_string(total_machines), 3);
 
-    // Step 1: Organize machines into groups based on their attributes
+    // 1: Organize machines into groups based on their attributes
     unordered_map<CPUType_t, vector<MachineId_t>> machine_groups;
 
     for (unsigned i = 0; i < total_machines; i++) {
@@ -40,7 +36,7 @@ void Scheduler::Init() {
 
     SimOutput("Scheduler::Init(): Machine groups created for each CPU type", 3);
 
-    // Step 2: Initialize minimum required VMs for each group
+    // 2: Initialize minimum required VMs for each group
     for (auto &group : machine_groups) {
         CPUType_t cpu_type = group.first;
         vector<MachineId_t> &machines = group.second;
@@ -49,51 +45,41 @@ void Scheduler::Init() {
         for (unsigned i = 0; i < init_vms; i++) {
             MachineId_t machine_id = machines[i];
             Machine_SetState(machine_id, S0);
+            // Machine_SetCorePerformance(machine_id, 0, P3); // Core ID is ignored
 
             // Create a default VM type for this CPU type
-            VMType_t default_vm_type = GetDefaultVMForCPU(cpu_type); // Helper function
+            VMType_t default_vm_type = GetDefaultVMForCPU(cpu_type); 
             VMId_t new_vm = VM_Create(default_vm_type, cpu_type);
             VM_Attach(new_vm, machine_id);
 
             vms.push_back(new_vm);
             this->machines.push_back(machine_id);
         }
-
-        // Put remaining machines in low-power state (S5)
-        for (unsigned i = init_vms; i < machines.size(); i++) {
-            MachineId_t machine_id = machines[i];
-            Machine_SetState(machine_id, S5);
-        }
     }
 
     SimOutput("Scheduler::Init(): Initialization complete with machine groups", 1);
 }
-
-
-
-
-
-
 
 void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
     TaskInfo_t task_info = GetTaskInfo(task_id);
 
     SimOutput("Scheduler::NewTask(): Handling new task " + to_string(task_id), 3);
 
-    // Step 1: Check existing VMs on active machines
-    bool task_assigned = false;
-    VMId_t best_vm = VMId_t(-1); //maybe change later
+    // Step 1: Attempt to place on an existing VM with appropriate SLA
+    VMId_t best_vm = VMId_t(-1);
     unsigned min_tasks = UINT_MAX;
-
     for (VMId_t vm : vms) {
         VMInfo_t vm_info = VM_GetInfo(vm);
         MachineInfo_t machine_info = Machine_GetInfo(vm_info.machine_id);
 
-        if (machine_info.s_state == S0 &&                     // Machine is active
-            machine_info.cpu == task_info.required_cpu &&     // CPU type matches
-            vm_info.vm_type == task_info.required_vm &&       // VM type matches
-            machine_info.memory_used + task_info.required_memory <= machine_info.memory_size && // Memory fits
-            vm_info.active_tasks.size() < min_tasks) {        // Least-loaded VM
+        // Check SLA priority: high SLA should prefer higher P-states
+        if (machine_info.s_state == S0 &&
+            machine_info.cpu == task_info.required_cpu &&
+            vm_info.vm_type == task_info.required_vm &&
+            machine_info.memory_used + task_info.required_memory <= machine_info.memory_size &&
+            vm_info.active_tasks.size() < min_tasks &&
+            (task_info.priority != SLA0 || machine_info.performance[0] >= P1)) {
+            
             best_vm = vm;
             min_tasks = vm_info.active_tasks.size();
         }
@@ -101,19 +87,25 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
 
     if (best_vm != VMId_t(-1)) {
         VM_AddTask(best_vm, task_id, task_info.priority);
-        SimOutput("Scheduler::NewTask(): Task " + to_string(task_id) +
+        SimOutput("Scheduler::NewTask(): Task " + to_string(task_id) + 
                   " assigned to VM " + to_string(best_vm), 2);
         return;
     }
 
-    // Step 2: Add a new VM to an already active machine
-    for (unsigned i = 0; i < machines.size(); i++) {
-        MachineId_t machine_id = machines[i];
+    // Step 2: Add a new VM to an active machine, adjusting P-state for SLA if needed
+    for (MachineId_t machine_id : machines) {
         MachineInfo_t machine_info = Machine_GetInfo(machine_id);
+        
+        if (machine_info.s_state == S0 &&
+            machine_info.cpu == task_info.required_cpu &&
+            machine_info.memory_used + task_info.required_memory <= machine_info.memory_size) {
+            
+            if (task_info.priority == SLA0 && machine_info.performance[0] < P1) {
+                Machine_SetCorePerformance(machine_id, 0, P1);
+                SimOutput("Scheduler::NewTask(): Increased P-state of machine " + to_string(machine_id) +
+                          " for high SLA task " + to_string(task_id), 2);
+            }
 
-        if (machine_info.s_state == S0 &&                     // Machine is active
-            machine_info.cpu == task_info.required_cpu &&     // CPU type matches
-            machine_info.memory_used + task_info.required_memory + 8 <= machine_info.memory_size) { // Memory fits
             VMId_t new_vm = VM_Create(task_info.required_vm, task_info.required_cpu);
             VM_Attach(new_vm, machine_id);
             VM_AddTask(new_vm, task_id, task_info.priority);
@@ -122,30 +114,6 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
 
             SimOutput("Scheduler::NewTask(): Added new VM " + to_string(new_vm) +
                       " to active machine " + to_string(machine_id) + " for task " + to_string(task_id), 2);
-            return;
-        }
-    }
-
-    // Step 3: Activate a new machine and create a VM
-    for (unsigned i = 0; i < Machine_GetTotal(); i++) {
-        MachineId_t machine_id = MachineId_t(i);
-        MachineInfo_t machine_info = Machine_GetInfo(machine_id);
-
-        if (machine_info.s_state == S5 &&                     // Machine is inactive
-            machine_info.cpu == task_info.required_cpu) {     // CPU type matches
-                                                            // add in memory check 
-
-            Machine_SetState(machine_id, S0); // Activate machine
-
-            VMId_t new_vm = VM_Create(task_info.required_vm, task_info.required_cpu);
-            VM_Attach(new_vm, machine_id);
-            VM_AddTask(new_vm, task_id, task_info.priority);
-
-            vms.push_back(new_vm);
-            machines.push_back(machine_id);
-
-            SimOutput("Scheduler::NewTask(): Activated machine " + to_string(machine_id) +
-                      " and created VM " + to_string(new_vm) + " for task " + to_string(task_id), 2);
             return;
         }
     }
@@ -159,17 +127,30 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
 
 
 void Scheduler::PeriodicCheck(Time_t now) {
-    SimOutput("Scheduler::PeriodicCheck(): Performing consolidation check", 3);
+    SimOutput("Scheduler::PeriodicCheck(): Performing consolidation and DVFS check", 2);
     
-    for (unsigned i = 0; i < machines.size(); i++) {
-        MachineId_t machine_id = machines[i];
+    for (MachineId_t machine_id : machines) {
         MachineInfo_t machine_info = Machine_GetInfo(machine_id);
-        
-        // If machine is idle and has no active VMs or tasks, deactivate it
-        if (machine_info.active_tasks == 0 && machine_info.active_vms == 0 && machine_info.s_state == S0) {
-            Machine_SetState(machine_id, S5);
-            //probably remove machine from active machines 
-            SimOutput("Scheduler::PeriodicCheck(): Deactivated machine " + to_string(machine_id), 2);
+
+        if (machine_info.s_state == S0) { // Only consider active machines
+            double utilization = static_cast<double>(machine_info.active_tasks) / machine_info.num_cpus;
+
+            // Determine P-state based on utilization thresholds
+            CPUPerformance_t new_p_state;
+            if (utilization > 0.75) {
+                new_p_state = P0; // Highest performance
+            } else if (utilization > 0.50) {
+                new_p_state = P1;
+            } else if (utilization > 0.25) {
+                new_p_state = P2;
+            } else {
+                new_p_state = P3; // Lowest power
+            }
+
+            // Apply the new P-state
+            Machine_SetCorePerformance(machine_id, 0, new_p_state); // Core ID is ignored
+            SimOutput("Scheduler::PeriodicCheck(): Adjusted P-state for machine " +
+                      to_string(machine_id) + " to " + to_string(new_p_state), 1);
         }
     }
 }
